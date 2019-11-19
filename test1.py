@@ -1,22 +1,39 @@
 #!/usr/bin/python3
-from Logger1 import *
-from Logger2 import *
+from SettingsBad import *
+from SettingsGood import *
+import asyncio
+import time
 
-def Log_2_1():
-  Logger2.log('Hello\n')
+async def F_1_1():
+  print('F_1_1')
+  s1 = SettingsBad()
+  await asyncio.sleep(2)
+  s1.set('p0', 0)
+  await asyncio.sleep(1)
 
-def Log_2_2():
-  Logger2.log('World\n')
+async def F_1_2():
+  print('F_1_2')
+  s2 = SettingsBad()
+  await asyncio.sleep(1)
+  s2.set('p1', 1)
+  await asyncio.sleep(2)
 
-def Log_1_1():
-  l1 = Logger1()
-  l1.log('Hello\n')
+async def F_2_1():
+  print('F_2_1')
+  await asyncio.sleep(2)
+  SettingsGood.getInstance().set('p0', 0)
+  await asyncio.sleep(1)
 
-def Log_1_2():
-  l1 = Logger1()
-  l1.log('World\n')
+async def F_2_2():
+  print('F_2_2')
+  await asyncio.sleep(1)
+  SettingsGood.getInstance().set('p1', 1)
+  await asyncio.sleep(2)
 
-Log_2_1()
-Log_2_2()
-Log_1_1()
-Log_1_2()
+async def main():
+  await asyncio.wait([F_1_1(), F_1_2(), F_2_1(), F_2_2()])
+  SettingsGood.getInstance().save()
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())
+loop.close()
